@@ -533,12 +533,19 @@ prepareData = function(cGSEAcoreOutput, alpha = 0.05, directoryPath, pvalAdjMeth
     # pvalComb = apply(pvalAdjTable, 1, sumlog) #fisher method for pvalue combination
     pvalComb = combinePval(pvalAdjTable, type = pvalCombMethod)
     pvalComb = base::unlist(base::lapply(pvalComb, '[[',3))
-
+    gsLogFC = geneSetsLogFC(logFcMatrix = logFCTable, genesetCollection = cGSEAcoreOutput$collection, condition = condi)
+    signifScore = signifCal(combiPval = pvalComb, avgLFC = gsLogFC)
+    minusLog10PvalComb <- base::as.numeric(-base::log10(pvalComb))
+    
     #result Table
     resTable2 = base::cbind(resTable, pvalAdjTable)
     resTable3 = base::cbind(resTable2, pvalComb)
-    base::colnames(resTable3)[base::ncol(resTable3)] = "combined_p.value"
-    result[[condi]] = stats::na.omit(resTable3)
+    resTable4 = base::cbind(resTable3, minusLog10PvalComb)
+    resTable5 = base::cbind(resTable4, gsLogFC)
+    resTable6 = base::cbind(resTable5, signifScore)
+    
+    base::colnames(resTable6)[base::ncol(resTable6)] = "combined_p.value"
+    result[[condi]] = stats::na.omit(resTable6)
     result[[condi]] = combineRanks(result[[condi]])
     base::colnames(result[[condi]])[base::ncol(result[[condi]])] = "Avg_Rank"
     if (shinyMode == FALSE){
