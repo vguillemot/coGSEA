@@ -540,14 +540,15 @@ prepareData = function(cGSEAcoreOutput, alpha = 0.05, directoryPath, pvalAdjMeth
     #result Table
     resTable2 = base::cbind(resTable, pvalAdjTable)
     resTable3 = base::cbind(resTable2, pvalComb)
-    resTable4 = base::cbind(resTable3, minusLog10PvalComb)
-    resTable5 = base::cbind(resTable4, gsLogFC)
-    resTable6 = base::cbind(resTable5, signifScore)
+    base::colnames(resTable3)[base::ncol(resTable3)] = "combined_p.value"
+    resTable4 = stats::na.omit(resTable3)
+    resTable4 = combineRanks(resTable4)
+    base::colnames(resTable4)[base::ncol(resTable4)] = "Avg_Rank"
+    resTable5 = base::cbind(resTable4, minusLog10PvalComb)
+    resTable6 = base::cbind(resTable5, gsLogFC)
+    resTable7 = base::cbind(resTable6, signifScore)
     
-    base::colnames(resTable6)[base::ncol(resTable6)] = "combined_p.value"
-    result[[condi]] = stats::na.omit(resTable6)
-    result[[condi]] = combineRanks(result[[condi]])
-    base::colnames(result[[condi]])[base::ncol(result[[condi]])] = "Avg_Rank"
+    result[[condi]] = resTable7
     if (shinyMode == FALSE){
       utils::write.csv(result[[condi]], file = paste(directoryPath,"/result_",condi,".csv", sep = ""))
     }
