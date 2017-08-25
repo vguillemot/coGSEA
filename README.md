@@ -44,7 +44,7 @@ In the current version, those 12 methods include :
 # How to install
 
 ``` r
-devtools::install_github("maxibor/coGSEA",build_vignettes = TRUE)
+devtools::install_github("vguillemot/coGSEA")
 ```
 
 
